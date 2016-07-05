@@ -14,9 +14,15 @@ $(function() {
     $('.select2-tags', container).each(function(i, el) {
       var model = $(el).data('model'),
           method = $(el).data('method'),
+          selection = $(el).val().length > 0 ? $(el).val().split(',').map(Number) : [],
+          collection = $(el).data('collection'),
           selectOptions = {
             width: '80%',
-            tags: $(el).data('collection')
+            tags: collection,
+            initSelection: function(element, callback) {
+              var data = $.grep(collection, function(e) { return selection.indexOf(e.id) >= 0 });
+              callback(data);
+            }
           };
 
       if(!!model) {
@@ -25,9 +31,9 @@ $(function() {
         $(el).on('select2-selecting', onItemAdded);
         $(el).on('select2-removed', onItemRemoved);
       }
-
+      
       $(el).select2(selectOptions);
-
+      
       function onItemRemoved(event) {
         var itemId = '#' + prefix +  '_' + event.val;
         $(itemId).remove();
